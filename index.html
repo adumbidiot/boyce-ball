@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js"></script>
+	</head>
+	<body>
+		<script>
+			let app = new PIXI.Application({width: 800, height: 600});
+			document.body.appendChild(app.view);
+			
+			PIXI.loader
+				.add("images/jacob.png")
+				.load(function(){
+				
+			});
+			
+			let texture = PIXI.utils.TextureCache["images/jacob.png"];
+			let sprite = new PIXI.Sprite(texture);
+			app.stage.addChild(sprite);
+		</script>
+	</body>
+</html>

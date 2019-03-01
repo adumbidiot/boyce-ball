@@ -1,0 +1,26 @@
+{
+  "name": "boyce-ball",
+  "version": "0.0.1",
+  "description": "boyce ball",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adumbidiot/boyce-ball.git"
+  },
+  "keywords": [
+    "boyce",
+    "ball"
+  ],
+  "author": "adumbidiot",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adumbidiot/boyce-ball/issues"
+  },
+  "homepage": "https://github.com/adumbidiot/boyce-ball#readme",
+  "dependencies": {
+    "pixi.js": "^5.0.0-rc.2"
+  }
+}
