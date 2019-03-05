@@ -10,12 +10,47 @@
 			PIXI.loader
 				.add("images/jacob.png")
 				.load(function(){
-				
-			});
-			
-			let texture = PIXI.utils.TextureCache["images/jacob.png"];
-			let sprite = new PIXI.Sprite(texture);
-			app.stage.addChild(sprite);
+					let texture = PIXI.utils.TextureCache["images/jacob.png"];
+					let sprite = new PIXI.Sprite(texture);
+					app.stage.addChild(sprite);
+					sprite.x = 0;
+					sprite.y = 0;
+					
+					let paddle1 = new PIXI.Graphics();
+					paddle1.beginFill(0xFFFF00);
+					paddle1.drawRect((800 * 1 / 6) - 30, 0, 30, 200);
+					app.stage.addChild(paddle1);
+					
+					let paddle2 = new PIXI.Graphics();
+					paddle2.beginFill(0x59f3ff);
+					paddle2.drawRect(800 * 5 / 6, 0, 30, 200);
+					app.stage.addChild(paddle2);
+					
+					let dx = 3;
+					let dy = 2;
+					
+					app.ticker.add(function(delta) {
+						sprite.x += delta * dx;
+						sprite.y += delta * dy;
+						
+						if(sprite.x < 0 || (sprite.x > paddle1.x && sprite.x < paddle1.x + paddle1.width) && sprite.y > paddle1.y && sprite.y < paddle1.y + paddle1.height){
+							dx = Math.abs(dx);
+						}
+						
+						if(sprite.x + sprite.width > 800){
+							dx = -Math.abs(dx);
+						}
+						
+						if(sprite.y < 0){
+							dy = Math.abs(dy);
+						}
+						
+						if(sprite.y + sprite.height > 600){
+							dy = -Math.abs(dy);
+						}
+						
+					});
+				});
 		</script>
 	</body>
 </html>
