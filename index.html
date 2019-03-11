@@ -7,50 +7,81 @@
 			let app = new PIXI.Application({width: 800, height: 600});
 			document.body.appendChild(app.view);
 			
+			class Keyboard {
+				constructor(){
+					this.keys = new Map();
+					window.addEventListener("keydown", function(e){
+						this.keys.insert(e.keyCode, true);
+					});
+					
+					window.addEventListener("keyup", function(e){
+						this.keys.set(e.keyCode, false);
+					});
+				}
+				
+				isDown(code){
+					
+				}
+			}
+			
+			let keyboard = new Keyboard();
+			let ball;
+			let paddle1;
+			let paddle2;
+			
 			PIXI.loader
 				.add("images/jacob.png")
-				.load(function(){
+				.load(setup);
+				
+				function setup(){
 					let texture = PIXI.utils.TextureCache["images/jacob.png"];
-					let sprite = new PIXI.Sprite(texture);
-					app.stage.addChild(sprite);
-					sprite.x = 0;
-					sprite.y = 0;
 					
-					let paddle1 = new PIXI.Graphics();
+					ball = new PIXI.Sprite(texture);
+					ball.x = 0;
+					ball.y = 0;
+					ball.dx = 3;
+					ball.dy = 2;
+					ball.width /= 4;
+					ball.height /= 4;
+					app.stage.addChild(ball);
+					
+					paddle1 = new PIXI.Graphics();
 					paddle1.beginFill(0xFFFF00);
 					paddle1.drawRect((800 * 1 / 6) - 30, 0, 30, 200);
 					app.stage.addChild(paddle1);
 					
-					let paddle2 = new PIXI.Graphics();
+					paddle2 = new PIXI.Graphics();
 					paddle2.beginFill(0x59f3ff);
 					paddle2.drawRect(800 * 5 / 6, 0, 30, 200);
 					app.stage.addChild(paddle2);
 					
-					let dx = 3;
-					let dy = 2;
+					app.ticker.add(gameLoop);
+				}
+				
+				function gameLoop(delta){
+					ball.x += delta * ball.dx;
+					ball.y += delta * ball.dy;
+						
+					if(ball.x < 0 || (ball.x > paddle1.x && ball.x < paddle1.x + paddle1.width) && ball.y > paddle1.y && ball.y < paddle1.y + paddle1.height){
+						ball.dx = Math.abs(ball.dx);
+					}
+						
+					if(ball.x + ball.width > 800){
+						ball.dx = -Math.abs(ball.dx);
+					}
+						
+					if(ball.y < 0){
+						ball.dy = Math.abs(ball.dy);
+					}
+						
+					if(ball.y + ball.height > 600){
+						ball.dy = -Math.abs(ball.dy);
+					}
 					
-					app.ticker.add(function(delta) {
-						sprite.x += delta * dx;
-						sprite.y += delta * dy;
+					if(true){
 						
-						if(sprite.x < 0 || (sprite.x > paddle1.x && sprite.x < paddle1.x + paddle1.width) && sprite.y > paddle1.y && sprite.y < paddle1.y + paddle1.height){
-							dx = Math.abs(dx);
-						}
-						
-						if(sprite.x + sprite.width > 800){
-							dx = -Math.abs(dx);
-						}
-						
-						if(sprite.y < 0){
-							dy = Math.abs(dy);
-						}
-						
-						if(sprite.y + sprite.height > 600){
-							dy = -Math.abs(dy);
-						}
-						
-					});
-				});
+					}
+				}
 		</script>
 	</body>
 </html>
