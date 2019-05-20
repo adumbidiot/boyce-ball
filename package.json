@@ -2,9 +2,11 @@
   "name": "boyce-ball",
   "version": "0.0.1",
   "description": "boyce ball",
-  "main": "index.js",
   "scripts": {
-    "test": "node server.js"
+    "serve": "node server.js",
+    "watch": "rollup -c -w",
+    "build": "rollup -c",
+	"format": "js-beautify **/*.js"
   },
   "repository": {
     "type": "git",
@@ -20,8 +22,9 @@
     "url": "https://github.com/adumbidiot/boyce-ball/issues"
   },
   "homepage": "https://github.com/adumbidiot/boyce-ball#readme",
-  "dependencies": {
+  "devDependencies": {
     "express": "^4.16.4",
-    "pixi.js": "^5.0.0-rc.2"
+    "rollup": "^1.12.1",
+	"js-beautify": "^1.10.0"
   }
 }

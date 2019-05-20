@@ -1,158 +1,61 @@
 <html>
+	<head>
+		<title>Boyce Ball</title>
+		<script src="BoyceBall.js"></script>
+	</head>
 	<body>
-		<canvas width="1920" height="1080" id="canvas" style="width: 500px;"></canvas>
+		<canvas width="1920" height="1080" id="canvas" style="width: 600px;"></canvas>
 		<script>			
-			class Keyboard {
-				constructor(){
-					this.keys = new Map();
-					window.addEventListener("keydown", (e) => {
-						this.keys.set(e.keyCode, true);
-					});
-					
-					window.addEventListener("keyup", (e) => {
-						this.keys.set(e.keyCode, false);
-					});
+			let State = BoyceBall.State;
+			let Paddle = BoyceBall.Paddle;
+			let Ball = BoyceBall.Ball;
+			
+			class TwoPlayerState extends State {
+				constructor(game){
+					super(game);
+					this.paddle1 = new Paddle(game, 1);
+					this.paddle2 = new Paddle(game, 2);
+					this.ball = new Ball(game)
 				}
 				
-				isDown(code){
-					return this.keys.get(code);
-				}
-			}
-			
-			let keyboard = new Keyboard();
-			
-			class State {
 				update(game){
-					
-				}
-				
-				render(game){
-					game.ctx.clearRect(0, 0, game.ctx.canvas.width, game.ctx.canvas.height);
-				}
-			}
-			
-			class LoadingState extends State {
-				constructor(){
-					super();
-					let assetsBase = './assets/';
-					let assets = [
-						['img', 'jacob.png'],
-						['img', 'stock-photo-cyber-internet-robot-hacker-hacking-into-a-computer-to-steal-personal-data.png'],
-					];
-					
-					this.total = assets.length;
-					this.loaded = 0;
-					
-					this.assetPromise = Promise.all(assets.map(asset => {
-						switch(asset[0]) {
-							case 'img': {
-								return new Promise((resolve, reject) => {
-									let img = new Image();
-									img.src = assetsBase + asset[1];
-									img.onload = () => {
-										this.loaded += 1;
-										resolve([asset[1], img]);
-									}
-								});
-							}
-							default:
-								throw asset[0];
-						}
-					}));
-				}
-				
-				update(game) {
 					super.update(game);
 					
-					if(this.loaded == this.total && game.keyboard.isDown(13)){
-						this.assetPromise.then(arr => {
-							for(var i = 0; i != arr.length; i++){
-								game.assets.set(arr[i][0], arr[i][1]);
-							}
-							game.state = new MainMenuState(game);
-						});
+					if(this.paddle1.rect.intersectsPoint(this.ball)){
+						this.ball.dx = Math.abs(this.ball.dx);
 					}
+					
+					if(this.paddle2.rect.intersectsPoint(this.ball)){
+						this.ball.dx = -Math.abs(this.ball.dx);
+					}
+					
+					if(game.keyboard.isDown(83)){
+						this.paddle1.moveDown(game);
+					}
+					
+					if(game.keyboard.isDown(87)){
+						this.paddle1.moveUp(game);
+					}
+					
+					if(game.keyboard.isDown(40)){
+						this.paddle2.moveDown(game);
+					}
+					
+					if(game.keyboard.isDown(38)){
+						this.paddle2.moveUp(game);
+					}
+					
+					this.ball.update(game);
 				}
 				
-				render(game) {
+				render(game){
 					super.render(game);
 					let ctx = game.ctx;
-					ctx.fillStyle = "#ff69b4";
+					ctx.fillStyle = 'black';
 					ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-					ctx.fillStyle = "#69ffb4";
-					ctx.font = "50px Comic Sans MS";
-					ctx.fillText("Loading...", 50, 100);
-					
-					game.ctx.fillRect(50, 150, 50 + (ctx.canvas.width - 150) * (this.loaded / this.total), 100);
-					
-					ctx.fillText("$> BOYCE_BALL.EXE", 50, 300);
-					ctx.fillText(this.loaded + '/' + this.total + ' assets loaded...', 50, 400);
-					ctx.fillText('PRESS ENTER TO BEGIN', 50, 500);
-				}
-			}
-			
-			class Button {
-				constructor(x, y, w, h){
-					this.x = x;
-					this.y = y;
-					this.w = w;
-					this.h = h;
-				}
-				
-				render(game){
-					let ctx = game.ctx;
-					ctx.fillStyle = "blue" || 'white';
-					ctx.fillRect(this.x, this.y, this.w, this.h);
-					if(this.text){
-						ctx.font = this.textStyle || '30px Comic Sans MS';
-						ctx.fillStyle = this.textColor || "white";
-						ctx.textAlign = 'center';
-						ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2);
-					}
-				}
-			}
-			
-			class MainMenuState extends State {
-				constructor(game){
-					super();
-					let twoPlayer = new Button(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2, 200, 100);
-					twoPlayer.text = "Two Player";
-					twoPlayer.textColor = "#b21717";
-					twoPlayer.textStyle = "30px Comic Sans MS";
-					
-					this.buttons = [
-						twoPlayer,
-					];
-				}
-				
-				render(game){
-					super.render(game);
-					let ctx = game.ctx;
-					let bg = game.assets.get('stock-photo-cyber-internet-robot-hacker-hacking-into-a-computer-to-steal-personal-data.png');
-					let scale = ctx.canvas.height / bg.height;
-					ctx.drawImage(bg, 0, 0, bg.width * scale, bg.height * scale);
-					
-					for(var i = 0; i != this.buttons.length; i++){
-						this.buttons[i].render(game);
-					}
-				}
-			}
-			
-			class BoyceBall {
-				constructor(ctx){
-					this.ctx = ctx;
-					this.state = new LoadingState();
-					this.keyboard = new Keyboard();
-					this.assets = new Map();
-				}
-				
-				start() {
-					this.loopInterval = setInterval(this.mainLoop.bind(this), 1000 / 60);
-				}
-				
-				mainLoop(){
-					this.state.update(this);
-					this.state.render(this);
+					this.paddle1.render(game);
+					this.paddle2.render(game);
+					this.ball.render(game);
 				}
 			}
 			
