@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/adumbidiot/boyce-ball#readme",
   "devDependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "rollup": "^1.12.1",
 	"js-beautify": "^1.10.0"
   }
